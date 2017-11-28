@@ -32,7 +32,10 @@ function adduser (username, email, password, conf) {
   validate('SSSO', arguments)
   //如果不是配置的用户不是
   if (!conf.opts) conf.opts = {}
-  //设置常对象用户对象，里面的id属性是
+  //设置常对象用户对象，里面的id属性是'org.couchdb.user:' + username的拼接（为什么org.couchdb.user：前缀？
+  //原因就在用户的登录名是有 命名空间，用户属于一个特殊的前缀。这个前缀是为了防止 复制冲突当你尝试合并两个或更多_user数据库.
+  //当前CouchDB发布，所有用户都属于同一个org.couchdb.user命名空间，这是无法改变的。）,name属性的属性值是用户名，password的属性的属性值是密码，类型是
+  //用户类型，roles的属性值是空数组，date的属性值是返回当前的日期时间
   const userobj = {
     _id: 'org.couchdb.user:' + username,
     name: username,
@@ -42,12 +45,16 @@ function adduser (username, email, password, conf) {
     roles: [],
     date: new Date().toISOString()
   }
+  //设置常对象logObj为空对象
   const logObj = {}
+  //通过forEach来遍历从userobj里面的每个属性中查找到password的属性，如果找到，就将密码的值以'XXXXX'的形式赋值给logObj对象对应的属性的属性值，如果不
+  //不是password属性，就将userobj里对应的属性及属性值赋值给logObj里的对应的属性及属性值
   Object.keys(userobj).forEach(k => {
     logObj[k] = k === 'password' ? 'XXXXX' : userobj[k]
   })
+  //当前进程对logObj对象触发打印事件、打印进度信息事件、增加用户事件和在第一次提交事件
   process.emit('log', 'verbose', 'adduser', 'before first PUT', logObj)
-
+  //
   const target = url.resolve(conf.registry, '-/user/org.couchdb.user:' + encodeURIComponent(username))
 
   return fetchJSON({target: target, method: 'PUT', body: userobj, opts: conf.opts})
