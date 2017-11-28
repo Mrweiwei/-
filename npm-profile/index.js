@@ -54,9 +54,9 @@ function adduser (username, email, password, conf) {
   })
   //当前进程对logObj对象触发打印事件、打印进度信息事件、增加用户事件和在第一次提交事件
   process.emit('log', 'verbose', 'adduser', 'before first PUT', logObj)
-  //
+  //用后面的标签来替换前面的配置中的记录
   const target = url.resolve(conf.registry, '-/user/org.couchdb.user:' + encodeURIComponent(username))
-
+  //返回结果是JSON格式
   return fetchJSON({target: target, method: 'PUT', body: userobj, opts: conf.opts})
 }
 
