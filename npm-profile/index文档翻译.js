@@ -54,16 +54,18 @@ function adduser (username, email, password, conf) {
   })
   //当前进程对logObj对象触发打印事件、打印进度信息事件、增加用户事件和在第一次提交事件
   process.emit('log', 'verbose', 'adduser', 'before first PUT', logObj)
-  //用后面的标签来替换前面的配置中的记录
+  //用后面的标签来替换前面的配置中的记录（encodeURIComponent() 函数可把字符串类型username作为 URI 组件进行编码。）
   const target = url.resolve(conf.registry, '-/user/org.couchdb.user:' + encodeURIComponent(username))
-  //返回结果是JSON格式
+  //返回结果是JSON格式获取到的信息（目标，方法是通过"put"方法获取，主页内容是userobj，参数设置是配置的参数）
   return fetchJSON({target: target, method: 'PUT', body: userobj, opts: conf.opts})
 }
 
 
-
+//登录函数三个参数（应户名，密码和配置）
 function login (username, password, conf) {
+  //验证三个参数用户名是否是字符串类型，密码是否是字符串类型，配置是否是对象类型
   validate('SSO', arguments)
+  //定义常对象userobj（id，名字，密码，类型，角色，日期）
   const userobj = {
     _id: 'org.couchdb.user:' + username,
     name: username,
@@ -72,22 +74,32 @@ function login (username, password, conf) {
     roles: [],
     date: new Date().toISOString()
   }
+  //初始化常对象打印对象为空对象
   const logObj = {}
+  //通过forEach来遍历从userobj里面的每个属性中查找到password的属性，如果找到，就将密码的值以'XXXXX'的形式赋值给logObj对象对应的属性的属性值，如果不
+  //是password属性，就将userobj里对应的属性及属性值赋值给logObj里的对应的属性及属性值
   Object.keys(userobj).forEach(k => {
     logObj[k] = k === 'password' ? 'XXXXX' : userobj[k]
   })
+  //当前进程触发打印事件、打印进度信息事件、登录事件和在第一次提交事件
   process.emit('log', 'verbose', 'login', 'before first PUT', logObj)
-
+  //用后面的标签来替换前面的配置中的记录（encodeURIComponent() 函数可把字符串类型username作为 URI 组件进行编码。）
   const target = url.resolve(conf.registry, '-/user/org.couchdb.user:' + encodeURIComponent(username))
+ //返回通过拷贝配置对象的的JSON对象，并且捕获异常，若果异常代码是 'E400'，则异常的提示信息是用户没有用户名，从后台获取用户名
+ //如果异常代码是'E409'，则抛出异常。
   return fetchJSON(Object.assign({method: 'PUT', target: target, body: userobj}, conf)).catch(err => {
     if (err.code === 'E400') err.message = `There is no user with the username "${username}".`
     if (err.code !== 'E409') throw err
+ //返回通过'get'方法获取到目标，并且将配置中的属性拷贝到目标中饭=，程序异步执行一个函数，传入result
     return fetchJSON(Object.assign({method: 'GET', target: target + '?write=true'}, conf)).then(result => {
+ //循环遍历result里面的所有属性    
       Object.keys(result).forEach(function (k) {
+ //判断userobj中如果不存在传入的属性或者是该属性是角色属性的话，将result里面对应的属性的值赋给userobj对应的属性的值
         if (!userobj[k] || k === 'roles') {
           userobj[k] = result[k]
         }
       })
+ //定义常对象req，方法是"put"方法，目标属性，内容属性，auth对象里面还有个基础属性，包括用户名和密码
       const req = {
         method: 'PUT',
         target: target + '/-rev/' + userobj._rev,
@@ -99,13 +111,16 @@ function login (username, password, conf) {
           }
         }
       }
+ //返回将req对象和conf对象拷贝到的新对象中（JSON格式）
       return fetchJSON(Object.assign({}, conf, req))
     })
   })
 }
-
+//获取函数
 function get (conf) {
+//先验证配置是否是对象类型 
   validate('O', arguments)
+//  
   const target = url.resolve(conf.registry, '-/npm/v1/user')
   return fetchJSON(Object.assign({target: target}, conf))
 }
