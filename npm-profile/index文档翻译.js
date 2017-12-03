@@ -120,13 +120,16 @@ function login (username, password, conf) {
 function get (conf) {
 //先验证配置是否是对象类型 
   validate('O', arguments)
-//  
+// 后面的字符串内容代替配置中的记录
   const target = url.resolve(conf.registry, '-/npm/v1/user')
+ //返回将配置对象拷贝到有target属性的对象中去
   return fetchJSON(Object.assign({target: target}, conf))
 }
-
+//设置函数
 function set (profile, conf) {
+//验证两个参数是否都是字符串类型的 
   validate('OO', arguments)
+  
   const target = url.resolve(conf.registry, '-/npm/v1/user')
   Object.keys(profile).forEach(key => {
     // profile keys can't be empty strings, but they CAN be null
