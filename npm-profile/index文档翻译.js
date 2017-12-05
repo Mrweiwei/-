@@ -125,24 +125,28 @@ function get (conf) {
  //返回将配置对象拷贝到有target属性的对象中去
   return fetchJSON(Object.assign({target: target}, conf))
 }
-//设置函数
+//设置函数（传入两个对象参数）
 function set (profile, conf) {
 //验证两个参数是否都是字符串类型的 
   validate('OO', arguments)
-  
+//后面的字符串内容代替配置中的记录
   const target = url.resolve(conf.registry, '-/npm/v1/user')
+//遍历 profile对象里面的每一个键名，如果对应的键值为空，则将其对应的键值设为空值null
   Object.keys(profile).forEach(key => {
     // profile keys can't be empty strings, but they CAN be null
     if (profile[key] === '') profile[key] = null
   })
+//返回从conf对象中拷贝的新的对象 
   return fetchJSON(Object.assign({target: target, method: 'POST', body: profile}, conf))
 }
 
+//检验方法
 function listTokens (conf) {
+//验证arguments是否是字符串类型
   validate('O', arguments)
-
+//返回
   return untilLastPage(`-/npm/v1/tokens`)
-
+//
   function untilLastPage (href, objects) {
     return fetchJSON(Object.assign({target: url.resolve(conf.registry, href)}, conf)).then(result => {
       objects = objects ? objects.concat(result.objects) : result.objects
