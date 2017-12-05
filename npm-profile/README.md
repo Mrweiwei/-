@@ -16,8 +16,8 @@
   + 2fa disable        disable 2fa for the current login
   + 2fa enable <mode>  enable 2fa for the current login
     + <mode> can be one of:
-      1.auth-only - Require two-factor authentication only when logging in
-      2.auth-and-writes - Require two-factor authentication when logging in AND when publishing
+      1. auth-only - Require two-factor authentication only when logging in
+      2. auth-and-writes - Require two-factor authentication when logging in AND when publishing
 
 
 ## Options:
