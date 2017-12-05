@@ -1,10 +1,10 @@
-npm-profile-cli
+# npm-profile-cli
 
-A minimal CLI for taking actions against your npmjs.com profile. Is a wrapper around the npm-profile library.
+## A minimal CLI for taking actions against your npmjs.com profile. Is a wrapper around the npm-profile library.
 
 npm-profile <cmd> <args>
 
-Commands:
+## Commands:
   adduser [<username>] [<email>]  adduser a new account
   login [<username>]              login to an existing account
   token [create|list|delete]      create and remove authentication tokens
@@ -20,7 +20,7 @@ Commands:
       auth-and-writes - Require two-factor authentication when logging in AND when publishing
 
 
-Options:
+## Options:
   --config    the npmrc to read/write your configuration from/to
                                      [string] [default: "/Users/rebecca/.npmrc"]
   --registry  the registry to talk to                                   [string]
