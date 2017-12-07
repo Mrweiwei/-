@@ -1,50 +1,37 @@
-# npm-profile
-## Provides functions for fetching and updating an npmjs.com profile.
+# NPM-简介
+## 提供获取和更新npmjs.com配置文件的功能。
 `
-const profile = require('npm-profile')
-profile.get(registry, {token}).then(result => {
-   // …
-})
-`
-The API that this implements is documented here:
+const  profile  =  require（' npm-profile '）
+ 配置文件。得到（注册表，{标记}）。那么（result  => {
+    // ... 
+}）`  
+这个实现的API记录在这里：
++ 认证
++ 配置文件编辑（和双因素认证）
 
-authentication
-profile editing (and two-factor authentication)
-Functions
-
-profile.adduser(username, email, password, config) → Promise
-
-profile.adduser(username, email, password, {registry}).then(result => {
+# 函数功能
+## rofile.adduser(username, email, password, config) → Promise
+`profile.adduser(username, email, password, {registry}).then(result => {
   // do something with result.token
 })
-Creates a new user on the server along with a fresh bearer token for future authentication as this user. This is what you see as an authToken in an .npmrc.
+`  
+### 在服务器上创建一个新用户以及一个新的不记名令牌，以便作为此用户的将来验证。这就是你所看到authToken的 .npmrc。如果用户已经存在，那么npm注册表将返回一个错误，但这是注册表特定的，不能保证。
++ username String
++ email String
++ password String
++ config Object
++ registry String (for reference, the npm registry is https://registry.npmjs.org)
++ opts Object, make-fetch-happen 用于设置缓存，代理，SSL CA和重试规则等。
+## Promise Value
+具有token可以传递到将来的身份验证请求的属性的对象。
 
-If the user already exists then the npm registry will return an error, but this is registry specific and not guaranteed.
+## Promise Rejection
+指示出错的错误对象。该headers属性将包含响应的HTTP标头。  
+如果因为需要OTP而拒绝该操作，code则将被设置为EOTP。  
+如果该操作因为来自IP地址而被拒绝，则该操作在该账户上不被允许，则该操作code将被设置为EAUTHIP。否则，代码将会'E'跟随HTTP响应代码，例如Forbidden响应E403。
 
-username String
-email String
-password String
-config Object
-registry String (for reference, the npm registry is https://registry.npmjs.org)
-opts Object, make-fetch-happen options for setting things like cache, proxy, SSL CA and retry rules.
-Promise Value
-
-An object with a token property that can be passed into future authentication requests.
-
-Promise Rejection
-
-An error object indicating what went wrong.
-
-The headers property will contain the HTTP headers of the response.
-
-If the action was denied because an OTP is required then code will be set to EOTP.
-
-If the action was denied because it came from an IP address that this action on this account isn't allowed from then the code will be set to EAUTHIP.
-
-Otherwise the code will be 'E' followed by the HTTP response code, for example a Forbidden response would be E403.
-
-profile.login(username, password, config) → Promise
-
+## profile.login(username, password, config) → Promise
+`
 profile.login(username, password, {registry}).catch(err => {
   if (err.code === 'otp') {
     return getOTPFromSomewhere().then(otp => {
@@ -52,46 +39,39 @@ profile.login(username, password, {registry}).catch(err => {
     })
   }
 }).then(result => {
-  // do something with result.token
+  // 用result.token做些事情 
 })
-Logs you into an existing user. Does not create the user if they do not already exist. Logging in means generating a new bearer token for use in future authentication. This is what you use as an authToken in an .npmrc.
+`
+## 将您记录到现有的用户。如果用户不存在，则不创建用户。登录意味着生成一个新的不记名令牌用于未来的认证。这是你在一个authToken中使用的.npmrc。
++ username String
++ email String
++ password String
++ config Object
++ registry String (for reference, the npm registry is https://registry.npmjs.org)
++ auth Object, properties: otp — the one-time password from a two-factor authentication device.
++ opts Object, make-fetch-happen用于设置缓存，代理，SSL CA和重试规则等。
 
-username String
-email String
-password String
-config Object
-registry String (for reference, the npm registry is https://registry.npmjs.org)
-auth Object, properties: otp — the one-time password from a two-factor authentication device.
-opts Object, make-fetch-happen options for setting things like cache, proxy, SSL CA and retry rules.
-Promise Value
-
-An object with a token property that can be passed into future authentication requests.
-
-Promise Rejection
-
-An error object indicating what went wrong.
-
-If the object has a code property set to EOTP then that indicates that this account must use two-factor authentication to login. Try again with a one-time password.
-
-If the object has a code property set to EAUTHIP then that indicates that this account is only allowed to login from certain networks and this ip is not on one of those networks.
-
-If the error was neither of these then the error object will have a code property set to the HTTP response code and a headers property with the HTTP headers in the response.
-
-profile.get(config) → Promise
-
+## Promise Value
+具有token可以传递到将来的身份验证请求的属性的对象。
+## Promise Rejection
+指示出错的错误对象。  
+如果该对象的code属性设置为EOTP那么表示该帐户必须使用双因素身份验证才能登录。再次尝试使用一次性密码。  
+如果该对象的code属性设置为EAUTHIP那么表示该帐户只能从某些网络登录，并且该IP不在其中一个网络上。  
+如果错误不是这些，那么错误对象将有一个 code属性设置为HTTP响应代码，并headers在响应中包含一个HTTP标头属性。
+## profile.get(config) → Promise
+`
 profile.get(registry, {auth: {token}}).then(userProfile => {
   // do something with userProfile
 })
-Fetch profile information for the authenticated user.
-
-config Object
-registry String (for reference, the npm registry is https://registry.npmjs.org)
-auth Object, properties: token — a bearer token returned from adduser, login or createToken, or, username, password (and optionally otp). Authenticating for this command via a username and password will likely not be supported in the future.
-opts Object, make-fetch-happen options for setting things like cache, proxy, SSL CA and retry rules.
-Promise Value
-
-An object that looks like this:
-
+`
+## 获取已认证用户的配置文件信息。
++ config Object
++ registry String (for reference, the npm registry is https://registry.npmjs.org)
++ auth Object, properties: token — a bearer token returned from adduser, login or createToken, or, username, password (and optionally otp). Authenticating for this command via a username and password will likely not be supported in the future.
++ opts Object, make-fetch-happen make-fetch-happen选项用于设置缓存，代理，SSL CA和重试规则等。
+## Promise Value
+一个看起来像这样的对象：
+`
 // "*" indicates a field that may not always appear
 {
   tfa: null |
@@ -111,149 +91,108 @@ An object that looks like this:
   twitter: String,  // *
   github: String    // *
 }
-Promise Rejection
+`
+## Promise Rejection
+指示出错的错误对象。
+该headers属性将包含响应的HTTP标头。  
+如果因为需要OTP而拒绝该操作，code则将被设置为EOTP。  
+如果该操作因为来自IP地址而被拒绝，则该操作在该账户上不被允许，则该操作code将被设置为EAUTHIP。  
+否则，代码将是HTTP响应代码。
 
-An error object indicating what went wrong.
-
-The headers property will contain the HTTP headers of the response.
-
-If the action was denied because an OTP is required then code will be set to EOTP.
-
-If the action was denied because it came from an IP address that this action on this account isn't allowed from then the code will be set to EAUTHIP.
-
-Otherwise the code will be the HTTP response code.
-
-profile.set(profileData, config) → Promise
-
+## profile.set(profileData, config) → Promise
+`
 profile.set({github: 'great-github-account-name'}, {registry, auth: {token}})
-Update profile information for the authenticated user.
-
-profileData An object, like that returned from profile.get, but see below for caveats relating to password, tfa and cidr_whitelist.
-config Object
-registry String (for reference, the npm registry is https://registry.npmjs.org)
-auth Object, properties: token — a bearer token returned from adduser, login or createToken, or, username, password (and optionally otp). Authenticating for this command via a username and password will likely not be supported in the future.
-opts Object, make-fetch-happen options for setting things like cache, proxy, SSL CA and retry rules.
-SETTING password
-
-This is used to change your password and is not visible (for obvious reasons) through the get() API. The value should be an object with old and new properties, where the former has the user's current password and the latter has the desired new password. For example
-
-profile.set({password: {old: 'abc123', new: 'my new (more secure) password'}}, {registry, auth: {token}})
-SETTING cidr_whitelist
-
-The value for this is an Array. Only valid CIDR ranges are allowed in it. Be very careful as it's possible to lock yourself out of your account with this. This is not currently exposed in npm itself.
-
-profile.set({cidr_whitelist: [ '8.8.8.8/32' ], {registry, auth: {token}})
-// ↑ only one of google's dns servers can now access this account.
-SETTING tfa
-
-Enabling two-factor authentication is a multi-step process.
-
-Call profile.get and check the status of tfa. If pending is true then you'll need to disable it with profile.set({tfa: {password, mode: 'disable'}, …).
-profile.set({tfa: {password, mode}}, {registry, auth: {token}})
-Note that the user's password is required here in the tfa object, regardless of how you're authenticating.
-mode is either auth-only which requires an otp when calling login or createToken, or mode is auth-and-writes and an otp will be required on login, publishing or when granting others access to your modules.
-Be aware that this set call may require otp as part of the auth object. If otp is needed it will be indicated through a rejection in the usual way.
-If tfa was already enabled then you're just switch modes and a successful response means that you're done. If the tfa property is empty and tfa wasn't enabled then it means they were in a pending state.
-The response will have a tfa property set to an otpauth URL, as used by Google Authenticator. You will need to show this to the user for them to add to their authenticator application. This is typically done as a QRCODE, but you can also show the value of the secret key in the otpauth query string and they can type or copy paste that in.
-To complete setting up two factor auth you need to make a second call to profile.set with tfa set to an array of TWO codes from the user's authenticator, eg: profile.set(tfa: [otp1, otp2]}, registry, {token})
-On success you'll get a result object with a tfa property that has an array of one-time-use recovery codes. These are used to authenticate later if the second factor is lost and generally should be printed and put somewhere safe.
-Disabling two-factor authentication is more straightforward, set the tfa attribute to an object with a password property and a mode of disable.
-
-profile.set({tfa: {password, mode: 'disable'}, {registry, auth: {token}}}
-Promise Value
-
-An object reflecting the changes you made, see description for profile.get.
-
-Promise Rejection
-
-An error object indicating what went wrong.
-
-The headers property will contain the HTTP headers of the response.
-
-If the action was denied because an OTP is required then code will be set to EOTP.
-
-If the action was denied because it came from an IP address that this action on this account isn't allowed from then the code will be set to EAUTHIP.
-
-Otherwise the code will be the HTTP response code.
-
-profile.listTokens(config) → Promise
-
-profile.listTokens(registry, {token}).then(tokens => {
+`
+更新已认证用户的配置文件信息。
++ profileData 一个对象，这样的，从回来profile.get，但请参阅下面的有关注意事项password，tfa和cidr_whitelist。
++ config Object
+registry String (供参考，npm注册表是https://registry.npmjs.org)
+auth对象，属性：token-承载令牌从返回 adduser，login或createToken，或，username，password（和任选的otp）。未来可能不支持通过用户名和密码验证此命令。
+opts 对象，make-fetch-happen选项用于设置缓存，代理，SSL CA和重试规则等。
+## SETTING password
+这是用来更改您的密码，并通过get()API 不可见（出于显而易见的原因）。值应该是与对象old 和new属性，其中前者具有用户的当前密码和后者具有所需的新的密码。例如
+`profile.set({password: {old: 'abc123', new: 'my new (more secure) password'}}, {registry, auth: {token}})`
+## SETTING cidr_whitelist
+这个值是一个数组。只允许有效的CIDR范围。要非常小心，因为可以用这个锁定自己的账户。这目前还没有暴露npm出来。
+`profile.set({cidr_whitelist: [ '8.8.8.8/32' ], {registry, auth: {token}})
+// ↑ only one of google's dns servers can now access this account.`
+## SETTING tfa
+启用双因素身份验证是一个多步骤的过程。  
+调用profile.get并检查状态tfa。如果pending是真的，那么你需要禁用它profile.set({tfa: {password, mode: 'disable'}, …)。  
+profile.set({tfa: {password, mode}}, {registry, auth: {token}})  
+请注意，无论您如何进行身份验证，password在此tfa对象中都需要用户。  
+mode或者是auth-only它需要一个otp呼叫时login 或createToken，或者mode是auth-and-writes和otp将需要在登录，发布或授权时，其他人访问你的模块。  
+请注意，此set调用可能需要otp作为auth对象的一部分。如果需要otp，将通过通常的方式拒绝。  
+如果tfa已经启用，那么你只是切换模式，成功的回应意味着你已经完成了。如果tfa属性为空并且tfa 未启用，则表示它们处于挂起状态。
+Google Authenticator会使用该响应的tfa属性设置为一个otpauth网址 。您需要将其显示给用户，以便他们添加到其身份验证器应用程序。这通常是作为QRCODE完成的，但您也可以在查询字符串中显示键的值，并且可以键入或复制粘贴。secretotpauth
+要完成设置两个因素auth你需要第二次调用 profile.set，tfa设置从用户的身份验证器的两个代码的数组，例如：profile.set(tfa: [otp1, otp2]}, registry, {token})
+成功后，您将得到一个结果对象tfa，其中包含一次性使用恢复代码的属性。如果第二个因素丢失，那么这些数据将用于后续认证，通常应该打印并放在安全的地方。
+禁用双因素认证是更直接的，所设置的tfa 属性与对象password属性和mode的disable。  
+`profile.set({tfa: {password, mode: 'disable'}, {registry, auth: {token}}}`
+## Promise Value
+反映您所做更改的对象，请参阅说明profile.get。
+## Promise Rejection
+指示出错的错误对象。  
+该headers属性将包含响应的HTTP标头 。  
+如果因为需要OTP而拒绝该操作，code则将被设置为EOTP。  
+如果该操作因为来自IP地址而被拒绝，则该操作在该账户上不被允许，则该操作code将被设置为EAUTHIP。  
+否则，代码将是HTTP响应代码。  
+## profile.listTokens(config) → Promise
+`profile.listTokens(registry, {token}).then(tokens => {
   // do something with tokens
 })
-Fetch a list of all of the authentication tokens the authenticated user has.
-
-config Object
-registry String (for reference, the npm registry is https://registry.npmjs.org)
-auth Object, properties: token — a bearer token returned from adduser, login or createToken, or, username, password (and optionally otp). Authenticating for this command via a username and password will likely not be supported in the future.
-opts Object, make-fetch-happen options for setting things like cache, proxy, SSL CA and retry rules.
-Promise Value
-
-An array of token objects. Each token object has the following properties:
-
-key — A sha512 that can be used to remove this token.
-token — The first six characters of the token UUID. This should be used by the user to identify which token this is.
-created — The date and time the token was created
-readonly — If true, this token can only be used to download private modules. Critically, it CAN NOT be used to publish.
-cidr_whitelist — An array of CIDR ranges that this token is allowed to be used from.
-Promise Rejection
-
-An error object indicating what went wrong.
-
-The headers property will contain the HTTP headers of the response.
-
-If the action was denied because an OTP is required then code will be set to EOTP.
-
-If the action was denied because it came from an IP address that this action on this account isn't allowed from then the code will be set to EAUTHIP.
-
-Otherwise the code will be the HTTP response code.
-
-profile.removeToken(token|key, config) → Promise
-
+`
+获取经过身份验证的用户拥有的所有身份验证令牌的列表。
++ config 
++ registry字符串（供参考，npm注册表是https://registry.npmjs.org）
++ auth对象，属性：token-承载令牌从返回 adduser，login或createToken，或，username，password（和任选的otp）。未来可能不支持通过用户名和密码验证此命令。
++ opts对象，make-fetch-happen选项用于设置缓存，代理，SSL CA和重试规则等。
+## Promise Value
++ 一个令牌对象数组。每个令牌对象具有以下属性：
++ 键 - 一个sha512，可以用来删除这个令牌。
++ 标记 - 标记UUID的前六个字符。这应该由用户使用来识别这是什么标记。
++ created - 创建令牌的日期和时间
++ 只读 - 如果为true，则此标记只能用于下载私有模块。重要的是，它不能用于发布。
++ cidr_whitelist - 允许使用该令牌的CIDR范围数组。
+## Promise Rejection
+指示出错的错误对象。  
+该headers属性将包含响应的HTTP标头。  
+如果因为需要OTP而拒绝该操作，code则将被设置为EOTP。  
+如果该操作因为来自IP地址而被拒绝，则该操作在该账户上不被允许，则该操作code将被设置为EAUTHIP。  
+否则，代码将是HTTP响应代码。  
+## profile.removeToken(token|key, config) → Promise
+`
 profile.removeToken(key, registry, {token}).then(() => {
   // token is gone!
 })
-Remove a specific authentication token.
-
-token|key String, either a complete authentication token or the key returned by profile.listTokens.
-config Object
-registry String (for reference, the npm registry is https://registry.npmjs.org)
-auth Object, properties: token — a bearer token returned from adduser, login or createToken, or, username, password (and optionally otp). Authenticating for this command via a username and password will likely not be supported in the future.
-opts Object, make-fetch-happen options for setting things like cache, proxy, SSL CA and retry rules.
-Promise Value
-
-No value.
-
-Promise Rejection
-
-An error object indicating what went wrong.
-
-The headers property will contain the HTTP headers of the response.
-
-If the action was denied because an OTP is required then code will be set to EOTP.
-
-If the action was denied because it came from an IP address that this action on this account isn't allowed from then the code will be set to EAUTHIP.
-
-Otherwise the code will be the HTTP response code.
-
-profile.createToken(password, readonly, cidr_whitelist, config) → Promise
-
-profile.createToken(password, readonly, cidr_whitelist, registry, {token, otp}).then(newToken => {
+`
+删除特定的身份验证令牌。
++ token|key字符串，一个完整的身份验证令牌或返回的密钥profile.listTokens。
++ config 目的
++ registry字符串（供参考，npm注册表是https://registry.npmjs.org）
++ auth对象，属性：token-承载令牌从返回 adduser，login或createToken，或，username，password（和任选的otp）。未来可能不支持通过用户名和密码验证此命令。
++ opts对象，make-fetch-happen选项用于设置缓存，代理，SSL CA和重试规则等。
+## Promise Rejection
+指示出错的错误对象。  
+该headers属性将包含响应的HTTP标头。  
+如果因为需要OTP而拒绝该操作，code则将被设置为EOTP。  
+如果该操作因为来自IP地址而被拒绝，则该操作在该账户上不被允许，则该操作code将被设置为EAUTHIP。  
+否则，代码将是HTTP响应代码。  
+## profile.createToken(password, readonly, cidr_whitelist, config) → Promise
+`profile.createToken(password, readonly, cidr_whitelist, registry, {token, otp}).then(newToken => {
   // do something with the newToken
-})
-Create a new authentication token, possibly with restrictions.
-
-password String
-readonly Boolean
-cidr_whitelist Array
-config Object
-registry String (for reference, the npm registry is https://registry.npmjs.org)
-auth Object, properties: token — a bearer token returned from adduser, login or createToken, or, username, password (and optionally otp). Authenticating for this command via a username and password will likely not be supported in the future.
-opts Object, make-fetch-happen options for setting things like cache, proxy, SSL CA and retry rules.
-Promise Value
-
-The promise will resolve with an object very much like the one's returned by profile.listTokens. The only difference is that token is not truncated.
-
+})`
+创建一个新的身份验证令牌，可能有限制。
++ password 串
++ readonly 布尔
++ cidr_whitelist 
++ config 目的
++ registry字符串（供参考，npm注册表是https://registry.npmjs.org）
++ auth对象，属性：token-承载令牌从返回 adduser，login或createToken，或，username，password（和任选的otp）。未来可能不支持通过用户名和密码验证此命令。
++ opts对象，make-fetch-happen选项用于设置缓存，代理，SSL CA和重试规则等。
+## Promise Value
+这个承诺将以一个非常像返回的对象来解决 profile.listTokens。唯一的区别token是不被截断。
+`
 {
   token: String,
   key: String,    // sha512 hash of the token UUID
@@ -261,35 +200,52 @@ The promise will resolve with an object very much like the one's returned by pro
   created: Date,
   readonly: Boolean
 }
-Promise Rejection
-
-An error object indicating what went wrong.
-
-The headers property will contain the HTTP headers of the response.
-
-If the action was denied because an OTP is required then code will be set to EOTP.
-
-If the action was denied because it came from an IP address that this action on this account isn't allowed from then the code will be set to EAUTHIP.
-
-Otherwise the code will be the HTTP response code.
-
-Logging
-
-This modules logs by emitting log events on the global process object. These events look like this:
-
-process.emit('log', 'loglevel', 'feature', 'message part 1', 'part 2', 'part 3', 'etc')
-loglevel can be one of: error, warn, notice, http, timing, info, verbose, and silly.
-
-feature is any brief string that describes the component doing the logging.
-
-The remaining arguments are evaluated like console.log and joined together with spaces.
-
-A real world example of this is:
-
-  process.emit('log', 'http', 'request', '→',conf.method || 'GET', conf.target)
-To handle the log events, you would do something like this:
-
-const log = require('npmlog')
+`
+## Promise Rejection
+指示出错的错误对象。  
+该headers属性将包含响应的HTTP标头。  
+如果因为需要OTP而拒绝该操作，code则将被设置为EOTP。  
+如果该操作因为来自IP地址而被拒绝，则该操作在该账户上不被允许，则该操作code将被设置为EAUTHIP。  
+否则，代码将是HTTP响应代码。  
+## Logging
+这个模块通过log在全局process对象上发布事件来记录日志。这些事件看起来像这样：
+`process.emit('log', 'loglevel', 'feature', 'message part 1', 'part 2', 'part 3', 'etc')`
+loglevel可以是一个：error，warn，notice，http，timing，info，verbose，和silly。  
+feature 是任何描述组件进行日志记录的简短字符串。  
+其的参数被评估console.log，并与空格连接在一起。  
+一个例子是：  
+`process.emit('log', 'http', 'request', '→',conf.method || 'GET', conf.target)`
+为了处理日志事件，你可以这样做：
+`const log = require('npmlog')
 process.on('log', function (level) {
   return log[level].apply(log, [].slice.call(arguments, 1))
-})
+})`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
