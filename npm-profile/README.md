@@ -220,7 +220,8 @@ feature 是任何描述组件进行日志记录的简短字符串。
 process.on('log', function (level) {
   return log[level].apply(log, [].slice.call(arguments, 1))
 })`
-
+## License
+MIT
 
 
 
