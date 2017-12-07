@@ -165,7 +165,7 @@ Google Authenticator会使用该响应的tfa属性设置为一个otpauth网址 �
 profile.removeToken(key, registry, {token}).then(() => {
   // token is gone!
 })
-`
+`  
 删除特定的身份验证令牌。
 + token|key字符串，一个完整的身份验证令牌或返回的密钥profile.listTokens。
 + config 目的
@@ -181,7 +181,7 @@ profile.removeToken(key, registry, {token}).then(() => {
 ## profile.createToken(password, readonly, cidr_whitelist, config) → Promise
 `profile.createToken(password, readonly, cidr_whitelist, registry, {token, otp}).then(newToken => {
   // do something with the newToken
-})`
+})`  
 创建一个新的身份验证令牌，可能有限制。
 + password 串
 + readonly 布尔
