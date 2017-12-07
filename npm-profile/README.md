@@ -9,8 +9,8 @@ const  profile  =  require（' npm-profile '）
 + 认证
 + 配置文件编辑（和双因素认证）
 
-# 函数功能
-## rofile.adduser(username, email, password, config) → Promise
+# index中几个函数的功能
+## profile.adduser(username, email, password, config) → Promise
 `profile.adduser(username, email, password, {registry}).then(result => {
   // do something with result.token
 })
@@ -70,7 +70,7 @@ profile.get(registry, {auth: {token}}).then(userProfile => {
 + auth Object, properties: token — a bearer token returned from adduser, login or createToken, or, username, password (and optionally otp). Authenticating for this command via a username and password will likely not be supported in the future.
 + opts Object, make-fetch-happen make-fetch-happen选项用于设置缓存，代理，SSL CA和重试规则等。
 ## Promise Value
-一个看起来像这样的对象：
+一个看起来像这样的对象：  
 `
 // "*" indicates a field that may not always appear
 {
@@ -101,7 +101,7 @@ profile.get(registry, {auth: {token}}).then(userProfile => {
 
 ## profile.set(profileData, config) → Promise
 `
-profile.set({github: 'great-github-account-name'}, {registry, auth: {token}})
+profile.set({github: 'great-github-account-name'}, {registry, auth: {token}})    
 `
 更新已认证用户的配置文件信息。
 + profileData 一个对象，这样的，从回来profile.get，但请参阅下面的有关注意事项password，tfa和cidr_whitelist。
@@ -113,7 +113,7 @@ opts 对象，make-fetch-happen选项用于设置缓存，代理，SSL CA和重�
 这是用来更改您的密码，并通过get()API 不可见（出于显而易见的原因）。值应该是与对象old 和new属性，其中前者具有用户的当前密码和后者具有所需的新的密码。例如
 `profile.set({password: {old: 'abc123', new: 'my new (more secure) password'}}, {registry, auth: {token}})`
 ## SETTING cidr_whitelist
-这个值是一个数组。只允许有效的CIDR范围。要非常小心，因为可以用这个锁定自己的账户。这目前还没有暴露npm出来。
+这个值是一个数组。只允许有效的CIDR范围。要非常小心，因为可以用这个锁定自己的账户。这目前还没有暴露npm出来。  
 `profile.set({cidr_whitelist: [ '8.8.8.8/32' ], {registry, auth: {token}})
 // ↑ only one of google's dns servers can now access this account.`
 ## SETTING tfa
@@ -191,7 +191,7 @@ profile.removeToken(key, registry, {token}).then(() => {
 + auth对象，属性：token-承载令牌从返回 adduser，login或createToken，或，username，password（和任选的otp）。未来可能不支持通过用户名和密码验证此命令。
 + opts对象，make-fetch-happen选项用于设置缓存，代理，SSL CA和重试规则等。
 ## Promise Value
-这个承诺将以一个非常像返回的对象来解决 profile.listTokens。唯一的区别token是不被截断。
+这个承诺将以一个非常像返回的对象来解决 profile.listTokens。唯一的区别token是不被截断。  
 `
 {
   token: String,
@@ -213,9 +213,9 @@ profile.removeToken(key, registry, {token}).then(() => {
 loglevel可以是一个：error，warn，notice，http，timing，info，verbose，和silly。  
 feature 是任何描述组件进行日志记录的简短字符串。  
 其的参数被评估console.log，并与空格连接在一起。  
-一个例子是：  
+一个例子是：    
 `process.emit('log', 'http', 'request', '→',conf.method || 'GET', conf.target)`
-为了处理日志事件，你可以这样做：
+为了处理日志事件，你可以这样做：  
 `const log = require('npmlog')
 process.on('log', function (level) {
   return log[level].apply(log, [].slice.call(arguments, 1))
