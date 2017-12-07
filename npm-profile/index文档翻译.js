@@ -144,9 +144,7 @@ function set (profile, conf) {
 function listTokens (conf) {
 //验证arguments是否是字符串类型
   validate('O', arguments)
-//返回
   return untilLastPage(`-/npm/v1/tokens`)
-//
   function untilLastPage (href, objects) {
     return fetchJSON(Object.assign({target: url.resolve(conf.registry, href)}, conf)).then(result => {
       objects = objects ? objects.concat(result.objects) : result.objects
@@ -159,12 +157,13 @@ function listTokens (conf) {
   }
 }
 
+//删除特定的身份验证令牌。
 function removeToken (tokenKey, conf) {
   validate('SO', arguments)
   const target = url.resolve(conf.registry, `-/npm/v1/tokens/token/${tokenKey}`)
   return fetchJSON(Object.assign({target: target, method: 'DELETE'}, conf))
 }
-
+//创建一个新的身份验证令牌，可能有限制。
 function createToken (password, readonly, cidrs, conf) {
   validate('SBAO', arguments)
   const target = url.resolve(conf.registry, '-/npm/v1/tokens')
@@ -175,13 +174,17 @@ function createToken (password, readonly, cidrs, conf) {
   }
   return fetchJSON(Object.assign({target: target, method: 'POST', body: props}, conf))
 }
-
+//获取错误信息的函数
 function FetchError (err, method, target) {
   err.method = method
   err.href = target
   return err
 }
-
+//extends关键字用于类声明或者类表达式中，以创建一个类，该类是另一个类的子类。
+//语法：class ChildClass extends ParentClass { ... }
+//extends关键字用来创建一个普通类或者内建对象的子类。
+//继承的.prototype必须是一个Object 或者 null。
+//用于实现HttpErrorBase继承错误类
 class HttpErrorBase extends Error {
   constructor (method, target, res, body) {
     super()
@@ -194,14 +197,14 @@ class HttpErrorBase extends Error {
     this.pkgid = packageName(target)
   }
 }
-
+//用于实现General类继承HttpErrorBase类
 class General extends HttpErrorBase {
   constructor (method, target, res, body) {
     super(method, target, res, body)
     this.message = `Registry returned ${this.statusCode} for ${this.method} on ${this.href}`
   }
 }
-
+//用于实现 AuthOTP类继承HttpErrorBase类
 class AuthOTP extends HttpErrorBase {
   constructor (method, target, res, body) {
     super(method, target, res, body)
@@ -210,7 +213,7 @@ class AuthOTP extends HttpErrorBase {
     Error.captureStackTrace(this, AuthOTP)
   }
 }
-
+//用于实现 AuthIPAddress类继承HttpErrorBase类
 class AuthIPAddress extends HttpErrorBase {
   constructor (res, body) {
     super(method, target, res, body)
@@ -219,7 +222,7 @@ class AuthIPAddress extends HttpErrorBase {
     Error.captureStackTrace(this, AuthIPAddress)
   }
 }
-
+//用于实现 AuthUnknowns类继承HttpErrorBase类
 class AuthUnknown extends HttpErrorBase {
   constructor (method, target, res, body) {
     super(method, target, res, body)
@@ -228,7 +231,7 @@ class AuthUnknown extends HttpErrorBase {
     Error.captureStackTrace(this, AuthIPAddress)
   }
 }
-
+//验证标题函数
 function authHeaders (auth) {
   const headers = {}
   if (!auth) return headers
@@ -241,7 +244,7 @@ function authHeaders (auth) {
   }
   return headers
 }
-
+//获取JSON方法
 function fetchJSON (conf) {
   const fetchOpts = {
     method: conf.method,
@@ -290,7 +293,7 @@ function fetchJSON (conf) {
     }
   })
 }
-
+//实现对包的异常捕获的方法
 function packageName (href) {
   try {
     let basePath = url.parse(href).pathname.substr(1)
