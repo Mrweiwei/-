@@ -69,8 +69,8 @@ listTokens函数、fetchJSON函数和packageName函数。    
 + 数组：进行对象中属性的键值对比查找
 + 对象：作为函数返回值，作为对象的属性，类型判断等
 6. **执行index-test.js的成果图（一个函数失败，六个函数成功）**
-![测试3](../images.测试3.jpg)
-![测试4](../images.测试4.jpg)
-![测试5](../images.测试5.jpg)
+![测试3](../images/测试3.jpg)
+![测试4](../images/测试4.jpg)
+![测试5](../images/测试5.jpg)
 
 
