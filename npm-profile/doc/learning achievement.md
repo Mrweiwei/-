@@ -20,14 +20,23 @@
 >>test文件夹
 作用：用来存放检测index文件的文件代码
 3. **项目依赖项:**
-1. make-fetch-happen  
++ make-fetch-happen         
 作用：一个node-fetch-npm包含附加功能的Node.js库，node-fetch并不打算包括HTTP缓存支持，请求池，代理，重试等等！），并设置其默认属性中的请求重试设置的属性值为false（即不请求重试）。
-2. aproba  
-作用：一个轻量级函数参数验证器
-3. url  
-作用：用于URL解析和解析的实用程序
-4.jshint  
-作用：JS代码风格检测工具
++ aproba        
+作用：一个轻量级函数参数验证器  
++ url        
+作用：用于URL解析和解析的实用程序  
++ jshint        
+作用：JS代码风格检测工具  
++ require-inject      
+作用：一个简单的模拟注射器兼容，无需在被测试的库中进行检测
++ tapTAP测试框架    
+作用：
+1. 用于在Node.js中编写测试的测试框架
+2. 用于运行测试和报告成功或失败的命令行界面。
+3. 支持测试覆盖，包括子进程的覆盖，并与Coveralls.io和Codecov.io集成。
+4. 支持并行测试，包括并行运行一些测试，以及其他测试。
+
 
 >## **二、解读代码：**
 1. **项目的功能：**  
@@ -65,7 +74,7 @@ listTokens函数、fetchJSON函数和packageName函数。    
 + 字符串：类型判断，值判断，截取赋值等
 + 数组：进行对象中属性的键值对比查找
 + 对象：作为函数返回值，作为对象的属性，类型判断等
-6. **执行index-test.js的成果图（一个函数失败，六个函数成功）**
+6. **执行index-test.js的成果图（一个函数失败，六个函数成功 利用的是TAP测试框架）**
 ![测试3](../images/测试3.jpg)
 ![测试4](../images/测试4.jpg)
 ![测试4](../images/测试5.jpg)
@@ -88,8 +97,6 @@ exports||暴露模块
 make-fetch-happen|是|一个node-fetch-npm包含附加功能的Node.js库，node-fetch并不打算包括HTTP缓存支持，请求池，代理，重试等等！）
 aproba  | 是|一个轻量级函数参数验证器
 url| 是|用于URL解析和解析的实用程序
-
-
 
 
 
