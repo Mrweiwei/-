@@ -71,7 +71,8 @@ listTokens函数、fetchJSON函数和packageName函数。    
 6. **执行index-test.js的成果图（一个函数失败，六个函数成功）**
 ![测试3](../images/测试3.jpg)
 ![测试4](../images/测试4.jpg)
-![测试5](../images/测试5.jpg)
+![测试4](../images/测试5.jpg)
+
 7. 
 
 
