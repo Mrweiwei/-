@@ -1,7 +1,7 @@
 # 问题清单
 >## **一、仓库简介：**
 1.  **仓库名称：**  
->>fruit-repository
+>>fruit-repository  
 >>**仓库地址：**https://github.com/Mrweiwei/fruit-repository/tree/add-license-2/npm-profile
 2. **仓库包含文件及作用**
 >>>index.js    
