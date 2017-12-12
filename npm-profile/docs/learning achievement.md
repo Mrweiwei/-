@@ -79,6 +79,8 @@ listTokens函数、fetchJSON函数和packageName函数。    
 ![测试3](../images/测试3.jpg)
 ![测试4](../images/测试4.jpg)
 ![测试4](../images/测试5.jpg)
+**经过细致的问题查找，从package.json文件中发现tap和require-inject两个模块已经被写死，导致无法执行npm install 这个两个模块，解决完问题后的效果图如下:**  
+![测试1](../images/测试1.jpg)
 
 7. **阅读代码心得**  
 在整个阅读代码过程中，心态时好时坏，敲入执行时报错就会茫然，但是坚持寻找解决方法才是解决问题的关键。
