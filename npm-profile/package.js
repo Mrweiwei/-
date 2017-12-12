@@ -7,7 +7,9 @@
   "license": "ISC",
   "dependencies": {
     "aproba": "^1.1.2",
-    "make-fetch-happen": "^2.5.0"
+    "make-fetch-happen": "^2.5.0",
+   "require-inject": "^1.4.2",
+    "tap": "^11.0.0"
   },
   "main": "index.js",
   "repository": {
