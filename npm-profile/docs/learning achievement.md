@@ -2,6 +2,7 @@
 >## **一、仓库简介：**
 1.  **仓库名称：**  
 >>fruit-repository
+>>**仓库地址：**https://github.com/Mrweiwei/fruit-repository/tree/add-license-2/npm-profile
 2. **仓库包含文件及作用**
 >>>index.js    
 >>>作用：项目主文件，也是项目的入口文件，其中暴露的函数作为第三方模块引用  
